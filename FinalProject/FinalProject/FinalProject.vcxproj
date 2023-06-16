@@ -78,6 +78,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <CudaCompile Include="kernel.cu" />
+    <CudaCompile Include="QRDecomposition.cu" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="DS_definitions.h" />
+    <ClInclude Include="DS_timer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="DS_timer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
