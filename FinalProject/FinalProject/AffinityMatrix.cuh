@@ -1,0 +1,2 @@
+void generateAffinityMatrix_cuda(float* point_x, float* point_y, const int point_count, float* result, float* d_result);
+void generateAffinityMatrix(float* point_x, float* point_y, const int point_count, float* result);
