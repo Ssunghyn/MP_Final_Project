@@ -498,45 +498,31 @@ __global__ void normalizeU(float* uT, float* Q, int n, int i) {
     }
 }
 
-__global__ void computeDotProductR(float* A, float* Q, float* R, int n, int i) {
-    int idx = blockIdx.x * blockDim.x + threadIdx.x;
-    int idy = blockIdx.y * blockDim.y + threadIdx.y;
-    __shared__ float localVal[BLOCK_SIZE_2 * BLOCK_SIZE_2];
-    float dotAR = 0.0f;
-
-    int xid = threadIdx.x;
-    int yid = idy;
-    localVal[threadIdx.y * BLOCK_SIZE_2 + threadIdx.x] = 0;
-    while (i <= yid && yid < n && xid < n)
+__global__ void computeDotProductR(float* A, float* Q, float* R, int n)
+{
+    int i = blockIdx.x * blockDim.x + threadIdx.x;
+    int j = blockIdx.y * blockDim.y + threadIdx.y;
+    __shared__ float localVal[BLOCK_SIZE_2];
+    localVal[i] = 0.0;
+    if (i < n && j < n)
     {
-        localVal[yid * BLOCK_SIZE_2 + xid] += A[yid * n + xid] * Q[i * n + xid];
-        xid += BLOCK_SIZE_1;
-        yid += BLOCK_SIZE_1;
-    }
-    __syncthreads();
-
-    int offset = (blockDim.y * blockDim.x) / 2;
-    int id = threadIdx.y * blockDim.x + threadIdx.x;
-    while (offset > 0)
-    {
-        if (id < offset)
-            localVal[id] += localVal[id + offset];
-        offset /= 2;
-        __syncthreads();
+        localVal[i] += A[j * n + k] * Q[i * n + k]
     }
 
-    dotAR = localVal[0];
-
-    if (idx >= i && idx < n) {
+    if (i < n && j >= i && j < n)
+    {
+        float dotAQ = 0.0f;
 
         /*
-        for (int j = 0; j < n; j++) {
-            dotAR += A[idx * n + j] * Q[i * n + j];
+        for (int k = 0; k < n; k++)
+        {
+            dotAQ += A[j * n + k] * Q[i * n + k];
         }
         */
-        R[i * n + j] = dotAR;
+        R[i * n + j] = dotAQ;
     }
 }
+
 
 __global__ void transpose(float* Q, int n) {
     int idx = blockIdx.x * blockDim.x + threadIdx.x;
@@ -580,9 +566,12 @@ void QR_Decomposition_CUDA(float* A, float* Q, float* R, int n) {
     // Compute R
     dim3 BlockDims2D(BLOCK_SIZE_2, BLOCK_SIZE_2);
     dim3 GridDims2D(ceil((float)n / BlockDims2D.x), ceil((float)n / BlockDims2D.y));
+    /*
     for (int i = 0; i < n; i++) {
         computeDotProductR << <GridDims2D, BlockDims2D >> > (d_A, d_Q, d_R, n, i);
     }
+    */
+    computeDotProductR << <GridDims2D, BlockDims2D >> > (d_A, d_Q, d_R, n);
 
     // Transpose Q
     transpose << <GridDims2D, BlockDims2D >> > (d_Q, n);
