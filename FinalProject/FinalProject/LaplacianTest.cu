@@ -71,9 +71,9 @@ int mainLaplacianTest() {
 	r4 = generateLaplacianMatrixOmp(d, N);
 	timer.offTimer(3);
 
-	//printf("½Ã¸®¾ó°ú ±âº» cuda ºñ±³\n");
+	//printf("ï¿½Ã¸ï¿½ï¿½ï¿½ï¿½ ï¿½âº» cuda ï¿½ï¿½\n");
 	//checkResult(r1, r2);
-	//printf("½Ã¸®¾ó°ú Stream cuda ºñ±³\n");
+	//printf("ï¿½Ã¸ï¿½ï¿½ï¿½ï¿½ Stream cuda ï¿½ï¿½\n");
 	//checkResult(r1, r3);
 	timer.printTimer();
 }

@@ -13,7 +13,7 @@
 
 #define SIGMA_DIMENSION 5
 
-#define TEST_DATA_COUNT 30000
+#define TEST_DATA_COUNT 10000
 #define PRINT_RESULT false
 
 #define GenDouble (rand() % 4 + ((float)(rand() % 100) / 100.0))
@@ -81,13 +81,13 @@ void generateAffinityMatrix(float* point_x, float* point_y, const int point_coun
     float* deltas = new float[point_count];
 
 
-#pragma omp parallel num_threads(NUM_THREADS)
+//#pragma omp parallel num_threads(NUM_THREADS)
     {
         float* pivot_left = new float[point_count];
         float* pivot_right = new float[point_count];
 
         // Get distance of 2 points
-#pragma omp for
+//#pragma omp for
         for (int p1 = 0; p1 < point_count; p1++) {
             for (int p2 = 0; p2 < point_count; p2++) {
                 distance[p1 * point_count + p2] = getDistance(point_x[p1], point_y[p1], point_x[p2], point_y[p2]);
@@ -95,13 +95,13 @@ void generateAffinityMatrix(float* point_x, float* point_y, const int point_coun
         }
 
         //Pick [SIGMA_DIMENSION]th min point
-#pragma omp for
+//#pragma omp for
         for (int p1 = 0; p1 < point_count; p1++) {
             deltas[p1] = quickSelection(&distance[p1 * point_count], pivot_left, pivot_right, point_count, SIGMA_DIMENSION);
         }
 
         //Make affinity matrix
-#pragma omp for
+//#pragma omp for
         for (int p1 = 0; p1 < point_count; p1++) {
             for (int p2 = 0; p2 < point_count; p2++) {
                 result[p1 * point_count + p2] = exp(-distance[p1 * point_count + p2] / (2 * deltas[p1] * deltas[p2]));
@@ -245,11 +245,12 @@ void generateAffinityMatrix_cuda(float* point_x, float* point_y, const int point
     cudaMemcpy(result, d_result, distance_mem_size, cudaMemcpyDeviceToHost);
 }
 
-int main()
+int affinMain()
+//int main()
 {
     cudaFree(0);
     DS_timer timer(2);
-    timer.setTimerName(0, (char*)"OpenMP");
+    timer.setTimerName(0, (char*)"Serial");
     timer.setTimerName(1, (char*)"OpenMP + CUDA");
 
     float point_x[TEST_DATA_COUNT];

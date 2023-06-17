@@ -42,6 +42,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>C:\eigen-3.4.0;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -55,6 +58,8 @@
     </Link>
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
+      <GenerateRelocatableDeviceCode>true</GenerateRelocatableDeviceCode>
+      <AdditionalOptions>-fmad=false %(AdditionalOptions)</AdditionalOptions>
     </CudaCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -74,18 +79,18 @@
     </Link>
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
+      <AdditionalCompilerOptions>-openmp</AdditionalCompilerOptions>
+      <AdditionalOptions>-fmad=false %(AdditionalOptions)</AdditionalOptions>
+      <GenerateRelocatableDeviceCode>true</GenerateRelocatableDeviceCode>
     </CudaCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
     <CudaCompile Include="AffinityMatrix.cu" />
-    <CudaCompile Include="LaplacianMatrix.cu" />
-    <CudaCompile Include="LaplacianTest.cu" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AffinityMatrix.cuh" />
     <ClInclude Include="DS_definitions.h" />
     <ClInclude Include="DS_timer.h" />
-    <ClInclude Include="LaplacianMatrix.cuh" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DS_timer.cpp" />
