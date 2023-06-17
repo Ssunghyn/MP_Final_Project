@@ -11,9 +11,9 @@
 #include <vector>
 #include <float.h>
 
-#define SIGMA_DIMENSION 5
+#define SIGMA_DIMENSION 8
 
-#define TEST_DATA_COUNT 10000
+#define TEST_DATA_COUNT 40000
 #define PRINT_RESULT false
 
 #define GenDouble (rand() % 4 + ((float)(rand() % 100) / 100.0))
@@ -179,7 +179,7 @@ __global__ void generateAffinityMatrix_v1(float* distance, float* deltas, const 
 }
 
 void generateAffinityMatrix_cuda(float* point_x, float* point_y, const int point_count, float* result, float* d_result) {
-    float* distance, * d_distance, * d_sorted_distance;
+    float* distance, * d_distance;
     float* d_point_x, * d_point_y;
     float* d_deltas;
 
@@ -243,6 +243,9 @@ void generateAffinityMatrix_cuda(float* point_x, float* point_y, const int point
     generateAffinityMatrix_v1 << <dimGridDistance, dimBlockDiatance >> > (d_distance, d_deltas, point_count, d_result);
     cudaDeviceSynchronize();
     cudaMemcpy(result, d_result, distance_mem_size, cudaMemcpyDeviceToHost);
+
+    cudaFree(d_result); cudaFree(d_distance);   cudaFree(d_point_x);    cudaFree(d_point_y);    cudaFree(d_deltas);
+    delete[] distance;
 }
 
 int affinMain()

@@ -6,7 +6,7 @@
 #include <omp.h>
 
 #define Genfloat ((float)(rand() % 100) / 100.0)
-#define N 1000
+#define N 40000
 #define ID2INDEX(_row,_col, _width) (((_row)*(_width))+(_col))
 
 bool checkResult(float* c, float* dc)
@@ -24,7 +24,9 @@ bool checkResult(float* c, float* dc)
 	return result;
 }
 
-int mainLaplacianTest() {
+int mainLaplacianTest() 
+//int main()
+{
 	float *a, *b, *c, *d;
 	a = new float[N * N];
 	b = new float[N * N];
